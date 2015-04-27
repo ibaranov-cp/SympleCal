@@ -1,13 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="FOO">
+    <PreferenceCategory android:title="Personal Settings">
 
-        <CheckBoxPreference
-            android:key="checkBoxPref"
-            android:title="check it out"
-            android:summary="click this litle box"/>
+        <EditTextPreference
+            android:key="MAINT_CAL"
+            android:inputType="phone"
+            android:title="Maintenance Calories"
+            android:summary="Amount of calories needed to maintain current weight"
+            android:dialogTitle="Maintenance Calories per day" />
+
+        <EditTextPreference
+            android:key="CUT_CAL"
+            android:inputType="phone"
+            android:title="Cutting Calories"
+            android:summary="Calorie Deficit you want per day"
+            android:dialogTitle="Deficit Calories per day" />
+
+        <EditTextPreference
+            android:key="START_WEIGHT"
+            android:inputType="phone"
+            android:title="Starting Weight"
+            android:summary="Record your starting weight"
+            android:dialogTitle="Starting Weight" />
 
     </PreferenceCategory>
+
+    <!-- PreferenceScreen
+        android:title="Mr. Robot"
+        android:summary="www.mrrobot.ca">
+        <intent android:action="android.intent.action.VIEW"
+            android:data="https://www.mrrobot.ca/" />
+    </PreferenceScreen -->
 
 </PreferenceScreen>

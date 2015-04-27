@@ -7,7 +7,7 @@ import android.preference.PreferenceFragment;
  * Created by Ilia Baranov on 2015-04-21.
  *
  */
-public class MyPreferenceFragment extends PreferenceFragment
+public class PersonalSettings extends PreferenceFragment
 {
     @Override
     public void onCreate(Bundle savedInstanceState)

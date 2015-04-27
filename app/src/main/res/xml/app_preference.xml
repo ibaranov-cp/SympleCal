@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="App Settings">
+
+        <CheckBoxPreference
+
+            android:key="lbs_opt"
+            android:title="Imperial Measurements"
+            android:summary="Use Lbs if true, otherwise app uses Kgs."
+            android:defaultValue="true"/>
+
+        <Preference
+            android:key="static_key1"
+            android:selectable="false"
+            android:title="About"
+            android:summary="This app was created by Ilia Baranov, 2015.\n I just wanted something
+simple! No need to know how much potassium I got in the last week, just calories in, calories out."/>
+
+        <Preference
+            android:key="static_key2"
+            android:selectable="false"
+            android:title="Version"
+            android:summary="0.1"/>
+
+        <PreferenceScreen
+            android:title="Mr. Robot"
+            android:summary="My Website!">
+            <intent android:action="android.intent.action.VIEW"
+                android:data="https://www.mrrobot.ca/" />
+        </PreferenceScreen>
+
+    </PreferenceCategory>
+
+
+</PreferenceScreen>
