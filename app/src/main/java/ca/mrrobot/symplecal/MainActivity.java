@@ -1,6 +1,11 @@
 package ca.mrrobot.symplecal;
 
 import android.content.Context;
+import android.os.SystemClock;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,6 +27,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -41,6 +47,8 @@ public class MainActivity extends ActionBarActivity {
     public static Float Deficit = (float)1;
     public static Float Maint = (float)1;
     public static Float Cut = (float)1;
+    public static Float tot = (float)0;
+    public static View rootView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +63,12 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
+    //Whenever App is paused, save the info. This will happen even on exit
+    @Override
+    protected void onPause(){
+        super.onPause();
+        write(Filename,baseContext);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -131,25 +145,78 @@ public class MainActivity extends ActionBarActivity {
         return buffer.toString();
     }
 
+    //update calories used
+    public static void update (Float val){
+        //System.out.println(val);
+        Cals = Cals + val;
+
+        float rem = tot - Cals;
+        ProgressBar mProgress = (ProgressBar) rootView.findViewById(R.id.progressBar);
+        mProgress.setProgress((int)(rem/tot*100.0));
+        TextView t = (TextView) rootView.findViewById(R.id.rem_cal);
+        t.setText(String.valueOf(rem));
+
+        //Lifetime calorie deficit
+        t = (TextView) rootView.findViewById(R.id.cals_def);
+        t.setText(String.valueOf(Deficit));
+
+        //Lifetime estimated weightloss
+        t = (TextView) rootView.findViewById(R.id.weight_lost);
+        t.setText(String.format("%.2f", Deficit / 3500.0));
+
+        //Save changes
+        write(Filename,baseContext);
+    }
+
+
 
     /**
      * A placeholder fragment containing a simple view.
      */
     public static class PlaceholderFragment extends Fragment {
 
+
         public PlaceholderFragment() {
         }
+
+        SharedPreferences.OnSharedPreferenceChangeListener prefListener =
+                new SharedPreferences.OnSharedPreferenceChangeListener() {
+                    public void onSharedPreferenceChanged(SharedPreferences prefs,
+                                                          String key) {
+                        if (key.equals("SET_DEF")) {
+                            Deficit = Float.valueOf(prefs.getString("SET_DEF", "0"));
+                            update((float)0);
+                        }
+                    }
+                };
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+            rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
             SharedPreferences Pref = PreferenceManager.getDefaultSharedPreferences(baseContext);
+            Pref.registerOnSharedPreferenceChangeListener(prefListener);
+
+            final EditText editText = (EditText) rootView.findViewById(R.id.enterCal);
+            editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if (actionId == EditorInfo.IME_ACTION_GO) {
+                        InputMethodManager in = (InputMethodManager) baseContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+                        in.hideSoftInputFromWindow(editText.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+                        update(Float.valueOf(editText.getText().toString()));
+                        SystemClock.sleep(200);
+                        editText.getText().clear();
+                    }
+                    return false;
+                }
+            });
+
             //Remaining calories for the day = maint - cut - recorded foods
             Maint = Float.valueOf(Pref.getString("MAINT_CAL", "1"));
             Cut = Float.valueOf(Pref.getString("CUT_CAL", "1"));
-            float tot = Maint - Cut;
+            tot = Maint - Cut;
 
             Time today = new Time(Time.getCurrentTimezone());
             today.setToNow();
@@ -164,20 +231,7 @@ public class MainActivity extends ActionBarActivity {
                 write(Filename,baseContext);
             }
 
-
-            float rem = tot - Cals;
-            ProgressBar mProgress = (ProgressBar) rootView.findViewById(R.id.progressBar);
-            mProgress.setProgress((int)(rem/tot*100.0));
-            TextView t = (TextView) rootView.findViewById(R.id.rem_cal);
-            t.setText(String.valueOf(rem));
-
-            //Lifetime calorie deficit
-            t = (TextView) rootView.findViewById(R.id.cals_def);
-            t.setText(String.valueOf(Deficit));
-
-            //Lifetime estimated weightloss
-            t = (TextView) rootView.findViewById(R.id.weight_lost);
-            t.setText(String.format("%.2f", Deficit / 3500.0));
+            update((float)0);
 
 
             return rootView;

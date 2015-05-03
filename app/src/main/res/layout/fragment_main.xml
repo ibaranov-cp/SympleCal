@@ -32,7 +32,9 @@
         android:layout_below="@+id/textView"
         android:layout_alignStart="@+id/textView"
         android:layout_alignEnd="@+id/textView"
-        android:imeOptions="actionGo"/>
+        android:imeActionId="@integer/go"
+        android:imeOptions="actionGo"
+        android:singleLine="true"/>
 
     <TextView
         android:layout_width="wrap_content"

@@ -24,6 +24,13 @@
             android:summary="Record your starting weight"
             android:dialogTitle="Starting Weight" />
 
+        <EditTextPreference
+            android:key="SET_DEF"
+            android:inputType="phone"
+            android:title="Set Deficit"
+            android:summary="Total historic Calorie Deficit"
+            android:dialogTitle="Set your current Calorie Deficit" />
+
     </PreferenceCategory>
 
     <!-- PreferenceScreen
